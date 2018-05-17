@@ -7,10 +7,10 @@ Modified and updated version of [NetScript](http://www.github.com/DNADNL/NetScri
 The script uses gcc to compile Netsurf 3.8 (The most recent development version) for AmigaOS 3.9. It was written with Arch Linux in mind, but should work with most other distros provided you have the pre-required packages.
 
 ## Content Of This Repository
-*ArchNS.sh: The script to compile Netsurf onto your machine
-*libs:
-**mpc-0.8.2.tar.gz: Backup of the mpc package v.0.8.2 that could be found at multiprecision.org/mpc/ (Site Down), it is used by the toolchain so we have to use this one instead of the online version
-**autoconf2.64-2.64-1-any.pkg.tar.xz: Arch compatible package to install the autoconf2.64 binary. This is not installed automatically and is provided for troubleshooting purposes.
+* ArchNS.sh: The script to compile Netsurf onto your machine
+* libs:
+** mpc-0.8.2.tar.gz: Backup of the mpc package v.0.8.2 that could be found at multiprecision.org/mpc/ (Site Down), it is used by the toolchain so we have to use this one instead of the online version
+** autoconf2.64-2.64-1-any.pkg.tar.xz: Arch compatible package to install the autoconf2.64 binary. This is not installed automatically and is provided for troubleshooting purposes.
 
 ## How to use NetScript(ArchNS) ?
 1. Clone this repository onto your machine
