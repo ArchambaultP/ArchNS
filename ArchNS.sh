@@ -1,5 +1,5 @@
-NETSURF_VERSION="3.6dev"
-NETSCRIPT_DATE="20170711-1" 
+NETSURF_VERSION="3.8dev"
+NETSCRIPT_DATE="20180517-1" 
 
 function usage()
 {
@@ -11,45 +11,35 @@ function usage()
 
 function good_ending()
 {
-	if tasklist | grep "WinUAE.exe"; then
-		taskkill /im WinUAE.exe
-		sleep 3
-	fi
-	if tasklist | grep "WinUAE.exe"; then
-		taskkill /f /im WinUAE.exe
-		sleep 3
-	fi
+
 	echo "                                               "
 	echo "-----------------------------------------------"
 	echo "                  GOOD ENDING                  "
 	echo "     Your NetSurf Archive is available in :    "
-	echo "     $(PWD)"
+	echo "     $(pwd)"
 	echo "                And is called :                "
 	echo "     $NETSURF_ARCHIVE_NAME"
 	echo "                                               "
 	echo "     Unpack it into a folder reachable by      "
 	echo "      your AmigaOS3 and then install it.       "
-	echo "(LHA Archive Format is not supported by Cygwin,"
-	echo "         sorry for the inconvenience)          "
 	echo "                                               "
 	echo "         Thanks for using NetScript !          "
 	echo "             Spread the world ! ^^             "
 	echo "-----------------------------------------------"
 	echo "                                               "
-	rm -rf "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
-	mkdir "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
-	tar -xpf "$NETSURF_ARCHIVE_NAME" -C "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
-	cd "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME""/NetSurf"
-	mkdir Users
-	mkdir Users/Default
-	echo "font_size:120
-font_min_size:80
-minimum_gif_delay:9
-enable_javascript:1
-homepage_url:""$HOMEPAGE""
-screen_modeid:0x50901303
-screen_ydpi:72" > Users/Default/Choices
-	xdg-open '/cygdrive/c/Users/Public/Documents/Amiga Files/Systems/AmiKit (Jan Zahurancik & Contributors, 2012, Amiga).rp9'
+	#rm -rf "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
+	#mkdir "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
+	#tar -xpf "$NETSURF_ARCHIVE_NAME" -C "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
+	#cd "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME""/NetSurf"
+	#mkdir Users
+	#mkdir Users/Default
+#	echo "font_size:120
+#font_min_size:80
+#minimum_gif_delay:9
+#enable_javascript:1
+#homepage_url:""$HOMEPAGE""
+#screen_modeid:0x50901303
+#screen_ydpi:72" > Users/Default/Choices
 }
 
 function bad_ending()
@@ -69,7 +59,7 @@ function bad_ending()
 	echo "                                               "
 	echo "You can also send to DNADNL the log file called"
 	echo "               LOG_NetScript.txt               "
-	echo "and located in $(PWD)"
+	echo "and located in "
 	echo "           via the Amiga.org forums.           "
 	echo "    DNADNL will do his best to answer you.     "
 	echo "                                               "
@@ -137,8 +127,8 @@ function bad_ending()
 
 	echo "                                               "
 	echo "-----------------------------------------------"
-	echo "        Now, you can relaunch NetScript        "
-	echo "    by using the \"./NetScript.sh\" command    "
+	echo "        Now, you can relaunch ArchNS           "
+	echo "    by using the \" bash ArchNS.sh\" command   "
 	echo "     (sorry again for the inconvenience !)     "
 	echo "                                               "
 	echo "         Thanks for using NetScript !          "
@@ -162,9 +152,11 @@ function beginning()
 	echo "                                               "
 	echo "-----------------------------------------------"
 	echo "         NetScript for Netsurf $NETSURF_VERSION"
-	echo "Crossed Compilation Cygwin (Windows) - AmigaOS3"
+	echo "    Crossed Compilation Arch Linux - AmigaOS3  "
 	echo "                                               "
-	echo "       Created by DNADNL, EyMenZ & Tygre       "
+	echo "       Created by DNADNL, EyMenZ & Tygre,      "
+	echo "       Modified by Pascal Archambault to       "
+	echo "	     work on Arch Linux Distros              "
 	echo "                                               "
 	echo "               A big thanks to :               "
 	echo "          Chris Young, transcode-open          "
@@ -218,7 +210,7 @@ function compile_netsurf(){
 	fi
 
 	make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env CC=m68k-unknown-amigaos-gcc package
-	mv NetSurf_Amiga/netsurf.tar ../$NETSURF_ARCHIVE_NAME
+	mv NetSurf_Amiga/netsurf.lha ../$NETSURF_ARCHIVE_NAME
 	cd ..
 }
 
@@ -245,6 +237,32 @@ function compile_nsgenbind()
 
 	make PREFIX=/opt/netsurf/m68k-unknown-amigaos/env
 	make PREFIX=/opt/netsurf/m68k-unknown-amigaos/env install
+	cd ..
+}
+
+function compile_librosprite()
+{
+	echo "                                               "
+	echo "@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@"
+	echo "                  Librosprite                  "
+	echo "@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@"
+	echo "                                               "
+
+	echo "Verifying librosprite folder... "
+	if [ ! -d "librosprite" ]
+	then
+		echo "librosprite folder doesn't exist. Downloading the fresh one..."
+		git clone git://git.netsurf-browser.org/librosprite.git
+		cd librosprite
+		git pull
+		make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos clean
+	else
+		echo "librosprite folder already exists. Compiling with your modifications (if you did some)..."
+		cd librosprite
+	fi
+
+	make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos
+	make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos install
 	cd ..
 }
 
@@ -534,6 +552,8 @@ function compile_buildsystem()
 
 	make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos
 	make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos install
+	sed -i 's_$(Q)$(AR) $(ARFLAGS) $@ $(OBJECTS)_$(Q)/opt/netsurf/m68k-unknown-amigaos/cross/bin/m68k-unknown-amigaos-ar $(ARFLAGS) $@ $(OBJECTS)_g' /opt/netsurf/m68k-unknown-amigaos/env/share/netsurf-buildsystem/makefiles/Makefile.top
+	
 	cd ..
 }
 
@@ -551,22 +571,36 @@ function compile_toolchains()
 		echo "/opt/netsurf folder doesn't exist."
 		echo "NetScript is now going to download and compile the toolchains needed to create /opt/netsurf (the NetScript execution will be longer). "
 		git clone git://git.netsurf-browser.org/toolchains.git
-		./updateFiles.sh toolchains &
+		#./updateFiles.sh toolchains &
+		direct=$(pwd)/libs
+		echo $direct
+		
+
+		sed -i 's@$(BUILDSTEPS)/srcdir-step2.d: $(BUILDSTEPS)/srcdir-step1.d $(SOURCESDIR)/$(UPSTREAM_GMP_TARBALL) $(SOURCESDIR)/$(UPSTREAM_MPFR_TARBALL) $(SOURCESDIR)/$(UPSTREAM_MPC_TARBALL)@$(BUILDSTEPS)/srcdir-step2.d: $(BUILDSTEPS)/srcdir-step1.d $(SOURCESDIR)/$(UPSTREAM_GMP_TARBALL) $(SOURCESDIR)/$(UPSTREAM_MPFR_TARBALL)@g' $(pwd)/toolchains/m68k-unknown-amigaos/Makefile
+
+		sed -i 's@tar xaf $(SOURCESDIR)/$(UPSTREAM_MPC_TARBALL)@tar xaf '$(pwd)'/libs/mpc-0.8.2.tar.gz@g' $(pwd)/toolchains/m68k-unknown-amigaos/Makefile
+
 		cd toolchains/m68k-unknown-amigaos
-		unlink /usr/bin/autom4te2.64
-		ln -s /opt/gcc-tools/epoch2/bin/autom4te-2.64 /usr/bin/autom4te2.64
+		#unlink /usr/bin/autom4te2.64
+		#ln -s /opt/gcc-tools/epoch2/bin/autom4te-2.64 /usr/bin/autom4te2.64
 		make distclean
 		make
+
+		#cd sources
+		#ls | grep mpc | xargs rm
+		#cp ../../../libs/mpc-0.8.2.tar.gz .
+		#cd ..
+
 		cd ../sdk
 		make GCCSDK_INSTALL_CROSSBIN=/opt/netsurf/m68k-unknown-amigaos/cross/bin GCCSDK_INSTALL_ENV=/opt/netsurf/m68k-unknown-amigaos/env distclean
 		make GCCSDK_INSTALL_CROSSBIN=/opt/netsurf/m68k-unknown-amigaos/cross/bin GCCSDK_INSTALL_ENV=/opt/netsurf/m68k-unknown-amigaos/env
 		cd ../..
 
-		mkdir -p /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos
-		cp /opt/netsurf/m68k-unknown-amigaos/cross/m68k-unknown-amigaos/bin/* /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos
+		#mkdir -p /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos
+		#cp /opt/netsurf/m68k-unknown-amigaos/cross/m68k-unknown-amigaos/bin/* /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos
 
-		cp /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/ar.exe /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/-ar.exe
-		rm /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/ar.exe
+		#cp /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/ar.exe /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/-ar.exe
+		#rm /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/ar.exe
 	else
 		echo "/opt/netsurf folder already exists."
 		echo "NetScript doesn't need to download and compile the toolchains (the NetScript execution will be shorter). "
@@ -587,7 +621,7 @@ function create_names()
 function unlink_nsgenbind()
 {
 	unlink /usr/bin/nsgenbind
-	ln -s $(PWD)/nsgenbind/build-i686-pc-cygwin-i686-pc-cygwin-release-binary/nsgenbind /usr/bin/nsgenbind
+	ln -s $(pwd)/nsgenbind/build-i686-pc-cygwin-i686-pc-cygwin-release-binary/nsgenbind /usr/bin/nsgenbind
 }
 
 HOMEPAGE="http://www.google.com/"
@@ -677,7 +711,7 @@ then
 	done
 
 	while [ \( "$cleanWorkspace" != "Y" -a "$cleanWorkspace" != "N" \) -a \( "$cleanWorkspace" != "y" -a "$cleanWorkspace" != "n" \) ]
-		do read -p "(4/4) Do you want to CLEAN your Workspace folder $(PWD) (that means deleting the old files and libraries) BEFORE the NetScript execution ? If you clean it, NetScript will delete the actual files and libraries and download the fresh ones, so you will lose your modifications (if you did some). (Y/n) : " cleanWorkspace
+		do read -p "(4/4) Do you want to CLEAN your Workspace folder $(pwd) (that means deleting the old files and libraries) BEFORE the NetScript execution ? If you clean it, NetScript will delete the actual files and libraries and download the fresh ones, so you will lose your modifications (if you did some). (Y/n) : " cleanWorkspace
 	done
 
 	duktape_choice
@@ -739,7 +773,7 @@ then
 
 			echo "Deleting old NetScript files..."
 
-			rm -Rf buildsystem libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc libwapcaplet nsgenbind toolchains NetSurf_*_AmigaOS3.tar
+			rm -Rf buildsystem libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc libwapcaplet nsgenbind toolchains librosprite  NetSurf_*_AmigaOS3.tar
 			rm -Rf netsurf/*
 			rm -Rf netsurf
 
@@ -757,23 +791,6 @@ then
 			echo "                                               "
 			rm -Rf NetSurf_*_AmigaOS3.tar
 	fi
-
-
-
-	echo "                                              "
-	echo "<><><><><><><><><><><><><><><><><><><><><><><>"
-	echo "                 Cygwin Tools                 "
-	echo "<><><><><><><><><><><><><><><><><><><><><><><>"
-	echo "                                              "
-
-	echo "Installing Cygwin tools..."
-
-	lynx -source rawgit.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
-	install apt-cyg /bin
-	apt-cyg install wget git make patch pkg-config apache2 python subversion gperf flex bison autoconf gcc-g++ gcc-tools-epoch2-automake libidn-devel kde-dev-scripts xdg-utils
-	rm apt-cyg
-
-	echo "Cygwin tools installed !"
 
 	compile_toolchains
 
@@ -800,10 +817,12 @@ then
 	compile_libnsutils
 
 	compile_libutf8proc
+	
+	compile_librosprite
 
 	compile_nsgenbind
 
-	unlink_nsgenbind
+	#unlink_nsgenbind
 
 	echo "                                               "
 	echo "~.~'~.~'~.~'~.~'~.~'~.~'~.~'~.~'~.~'~.~'~.~'~.~"
@@ -816,7 +835,7 @@ then
 	then
 		echo "netsurf folder doesn't exist. Downloading the fresh one..."
 		git clone git://git.netsurf-browser.org/netsurf.git
-		./updateFiles.sh amiga &
+		#./updateFiles.sh amiga &
 		cd netsurf
 		git pull
 		make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env CC=m68k-unknown-amigaos-gcc clean
@@ -844,7 +863,7 @@ then
 			echo "            the NetScript Execution            "
 			echo "-----------------------------------------------"
 			echo "                                               "
-			rm -Rf buildsystem libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc libwapcaplet nsgenbind toolchains
+			rm -Rf buildsystem libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc librosprite libwapcaplet nsgenbind toolchains
 			rm -Rf netsurf/*
 			rm -Rf netsurf
 	fi
@@ -963,6 +982,11 @@ then
 	if [ "$libutf8proc" = "1" ]
 	then
 		compile_libutf8proc
+	fi
+
+	if [ "$librosprite" = "1"]
+	then
+		compile_librosprite
 	fi
 
 	if [ "$nsgenbind" = "1" ]
