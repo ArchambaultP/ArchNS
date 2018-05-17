@@ -1,6 +1,6 @@
 # ArchNS
 Script to compile Netsurf 3.8(Dev) for AmigaOS 3.9 on Arch Linux,
-Modified and updated version of NetScript at github.com/DNADNL/NetScript
+Modified and updated version of [NetScript](http://www.github.com/DNADNL/NetScript "NetScript")
 
 ## Info
 
