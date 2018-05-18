@@ -585,36 +585,23 @@ function compile_toolchains()
 		echo "/opt/netsurf folder doesn't exist."
 		echo "NetScript is now going to download and compile the toolchains needed to create /opt/netsurf (the NetScript execution will be longer). "
 		git clone git://git.netsurf-browser.org/toolchains.git
-		#./updateFiles.sh toolchains &
-		direct=$(pwd)/libs
-		echo $direct
-		
 
 		sed -i 's@$(BUILDSTEPS)/srcdir-step2.d: $(BUILDSTEPS)/srcdir-step1.d $(SOURCESDIR)/$(UPSTREAM_GMP_TARBALL) $(SOURCESDIR)/$(UPSTREAM_MPFR_TARBALL) $(SOURCESDIR)/$(UPSTREAM_MPC_TARBALL)@$(BUILDSTEPS)/srcdir-step2.d: $(BUILDSTEPS)/srcdir-step1.d $(SOURCESDIR)/$(UPSTREAM_GMP_TARBALL) $(SOURCESDIR)/$(UPSTREAM_MPFR_TARBALL)@g' $(pwd)/toolchains/m68k-unknown-amigaos/Makefile
 
 		sed -i 's@tar xaf $(SOURCESDIR)/$(UPSTREAM_MPC_TARBALL)@tar xaf '$(pwd)'/libs/mpc-0.8.2.tar.gz@g' $(pwd)/toolchains/m68k-unknown-amigaos/Makefile
 
 		cd toolchains/m68k-unknown-amigaos
-		#unlink /usr/bin/autom4te2.64
-		#ln -s /opt/gcc-tools/epoch2/bin/autom4te-2.64 /usr/bin/autom4te2.64
+		
+		#add automate2.64 here if need be
+
 		make distclean
 		make
-
-		#cd sources
-		#ls | grep mpc | xargs rm
-		#cp ../../../libs/mpc-0.8.2.tar.gz .
-		#cd ..
 
 		cd ../sdk
 		make GCCSDK_INSTALL_CROSSBIN=/opt/netsurf/m68k-unknown-amigaos/cross/bin GCCSDK_INSTALL_ENV=/opt/netsurf/m68k-unknown-amigaos/env distclean
 		make GCCSDK_INSTALL_CROSSBIN=/opt/netsurf/m68k-unknown-amigaos/cross/bin GCCSDK_INSTALL_ENV=/opt/netsurf/m68k-unknown-amigaos/env
 		cd ../..
 
-		#mkdir -p /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos
-		#cp /opt/netsurf/m68k-unknown-amigaos/cross/m68k-unknown-amigaos/bin/* /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos
-
-		#cp /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/ar.exe /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/-ar.exe
-		#rm /opt/netsurf/m68k/unknown/amigaos/cross/bin/m68k/unknown/amigaos/ar.exe
 	else
 		echo "/opt/netsurf folder already exists."
 		echo "NetScript doesn't need to download and compile the toolchains (the NetScript execution will be shorter). "
@@ -850,8 +837,7 @@ then
 	if [ ! -d "netsurf" ]
 	then
 		echo "netsurf folder doesn't exist. Downloading the fresh one..."
-		git clone git://git.netsurf-browser.org/netsurf.git
-		#./updateFiles.sh amiga &
+		git clone git://git.netsurf-browser.org/netsurf.git		
 		cd netsurf
 		git pull
 		make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env CC=m68k-unknown-amigaos-gcc clean
