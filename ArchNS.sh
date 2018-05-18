@@ -27,19 +27,6 @@ function good_ending()
 	echo "             Spread the world ! ^^             "
 	echo "-----------------------------------------------"
 	echo "                                               "
-	#rm -rf "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
-	#mkdir "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
-	#tar -xpf "$NETSURF_ARCHIVE_NAME" -C "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME"
-	#cd "$OUTPUT_PATH""\\""$NETSURF_FOLDER_NAME""/NetSurf"
-	#mkdir Users
-	#mkdir Users/Default
-#	echo "font_size:120
-#font_min_size:80
-#minimum_gif_delay:9
-#enable_javascript:1
-#homepage_url:""$HOMEPAGE""
-#screen_modeid:0x50901303
-#screen_ydpi:72" > Users/Default/Choices
 }
 
 function bad_ending()
@@ -109,7 +96,7 @@ function bad_ending()
 			echo "  You chose to DELETE the files and libraries  "
 			echo "-----------------------------------------------"
 			echo "                                               "
-			rm -Rf buildsystem libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc libwapcaplet nsgenbind toolchains
+			rm -Rf buildsystem libnslog libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc libwapcaplet nsgenbind toolchains
 			rm -Rf netsurf/*
 			rm -Rf netsurf
 			echo "                                               "
@@ -239,6 +226,33 @@ function compile_nsgenbind()
 	make PREFIX=/opt/netsurf/m68k-unknown-amigaos/env install
 	cd ..
 }
+
+function compile_libnslog()
+{
+	echo "                                               "
+	echo "@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@"
+	echo "                  Libnslog                     "
+	echo "@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@¨@"
+	echo "                                               "
+
+	echo "Verifying libnslog folder... "
+	if [ ! -d "libnslog" ]
+	then
+		echo "libnslog folder doesn't exist. Downloading the fresh one..."
+		git clone git://git.netsurf-browser.org/libnslog.git
+		cd libnslog
+		git pull
+		make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos clean
+	else
+		echo "librosprite folder already exists. Compiling with your modifications (if you did some)..."
+		cd libnslog
+	fi
+
+	make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos
+	make TARGET=amigaos3 PREFIX=/opt/netsurf/m68k-unknown-amigaos/env HOST=m68k-unknown-amigaos install
+	cd ..
+}
+
 
 function compile_librosprite()
 {
@@ -773,7 +787,7 @@ then
 
 			echo "Deleting old NetScript files..."
 
-			rm -Rf buildsystem libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc libwapcaplet nsgenbind toolchains librosprite  NetSurf_*_AmigaOS3.tar
+			rm -Rf buildsystem libnslog libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc libwapcaplet nsgenbind toolchains librosprite  NetSurf_*_AmigaOS3.tar
 			rm -Rf netsurf/*
 			rm -Rf netsurf
 
@@ -797,6 +811,8 @@ then
 	export_path
 
 	compile_buildsystem
+
+	compile_libnslog
 
 	compile_libnsgif
 
@@ -863,7 +879,7 @@ then
 			echo "            the NetScript Execution            "
 			echo "-----------------------------------------------"
 			echo "                                               "
-			rm -Rf buildsystem libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc librosprite libwapcaplet nsgenbind toolchains
+			rm -Rf buildsystem libnslog libcss libdom libhubbub libnsbmp libnsgif libnsutils libparserutils libsvgtiny libutf8proc librosprite libwapcaplet nsgenbind toolchains
 			rm -Rf netsurf/*
 			rm -Rf netsurf
 	fi
