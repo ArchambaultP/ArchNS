@@ -615,7 +615,7 @@ function export_path(){
 
 function create_names()
 {
-	NETSURF_ARCHIVE_NAME="NetSurf_$NETSURF_VERSION""_$NETSURF_DUKTAPE""_AmigaOS3.tar.gz"
+	NETSURF_ARCHIVE_NAME="NetSurf_$NETSURF_VERSION""_$NETSURF_DUKTAPE""_AmigaOS3.lha"
 	NETSURF_FOLDER_NAME="NetSurf_$NETSURF_VERSION""_$NETSURF_DUKTAPE""_AmigaOS3"
 }
 
